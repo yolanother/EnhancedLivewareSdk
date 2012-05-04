@@ -3,6 +3,7 @@ package com.sonyericsson.extras.liveware.extension.util.view;
 import com.sonyericsson.extras.liveware.aef.control.Control;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlExtension;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlTouchEvent;
+import com.sonyericsson.extras.liveware.extension.util.registration.DeviceInfo;
 import com.sonyericsson.extras.liveware.sdk.R;
 
 import android.content.Context;
@@ -24,8 +25,6 @@ import java.util.List;
 
 public class ControlExtensionViewGroup extends ControlExtension {
 	private static final String TAG = "ControlExtensionViewGroup";
-    public static final int DEVICE_SMART_WATCH = 0;
-    public static final int DEVICE_HEADSET = 1;
 
     private int mDevice;
 
@@ -53,14 +52,14 @@ public class ControlExtensionViewGroup extends ControlExtension {
             final String hostAppPackageName) {
         super(context, hostAppPackageName);
 
-        if (device != DEVICE_HEADSET && device != DEVICE_SMART_WATCH) {
+        if (device != DeviceInfo.DEVICE_HEADSET && device != DeviceInfo.DEVICE_SMART_WATCH) {
             throw new IllegalArgumentException("Invalid device");
         }
 
         mDevice = device;
 
-        mWidth = getSupportedControlWidth();
-        mHeight = getSupportedControlHeight();
+        mWidth = DeviceInfo.getDeviceWidth(device);
+        mHeight = DeviceInfo.getDeviceHeight(device);
         mChildren = new ArrayList<View>();
         mBitmap = Bitmap.createBitmap(mWidth, mHeight, Config.RGB_565);
         mCanvas = new Canvas(mBitmap);
@@ -247,48 +246,6 @@ public class ControlExtensionViewGroup extends ControlExtension {
 
     public int getChildCount() {
         return mChildren.size();
-    }
-
-    /**
-     * Get supported control width.
-     *
-     * @param context The context.
-     * @return the width.
-     */
-    public int getSupportedControlWidth() {
-        Resources r = mContext.getResources();
-
-        switch (mDevice) {
-            case DEVICE_HEADSET:
-                return r.getDimensionPixelSize(R.dimen.headset_pro_control_width);
-
-            case DEVICE_SMART_WATCH:
-                return r.getDimensionPixelSize(R.dimen.smart_watch_control_width);
-
-            default:
-                throw new IllegalArgumentException("Bad device");
-        }
-    }
-
-    /**
-     * Get supported control height.
-     *
-     * @param context The context.
-     * @return the height.
-     */
-    public int getSupportedControlHeight() {
-        Resources r = mContext.getResources();
-
-        switch (mDevice) {
-            case DEVICE_HEADSET:
-                return r.getDimensionPixelSize(R.dimen.headset_pro_control_height);
-
-            case DEVICE_SMART_WATCH:
-                return r.getDimensionPixelSize(R.dimen.smart_watch_control_height);
-
-            default:
-                throw new IllegalArgumentException("Bad device");
-        }
     }
 
     @Override

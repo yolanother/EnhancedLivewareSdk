@@ -398,7 +398,13 @@ public class DeviceInfo {
 
         return keyPad;
     }
-    
+
+    /**
+     * Get supported control width.
+     *
+     * @param context The context.
+     * @return the width.
+     */
     public static int getDeviceWidth(int device) {
     	switch(device) {
 	    	case DEVICE_SMART_WATCH:
@@ -408,7 +414,13 @@ public class DeviceInfo {
     	}
     	return 0;
     }
-    
+
+    /**
+     * Get supported control height.
+     *
+     * @param context The context.
+     * @return the height.
+     */
     public static int getDeviceHeight(int device) {
     	switch(device) {
 	    	case DEVICE_SMART_WATCH:
