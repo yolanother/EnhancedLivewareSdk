@@ -13,6 +13,7 @@ import android.graphics.PorterDuff.Mode;
 import android.graphics.Canvas;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.MeasureSpec;
@@ -196,8 +197,34 @@ public class ControlExtensionViewGroup extends ControlExtension {
         invalidate();
     }
     
+    public View addView(int resourceId) {
+        final LayoutInflater inflater = LayoutInflater.from(mContext);
+        View v = inflater.inflate(resourceId, null);
+        addView(v);
+        return v;
+    }
+    
+    public void setContentView(int resourceId) {
+    	addView(resourceId);
+    }
+    
+    public void setContentView(View view) {
+    	addView(view);
+    }
+    
     public View getChildAt(int index) {
         return mChildren.get(index);
+    }
+    
+    public View findViewById(int resourceId) {
+    	View view = null;
+    	for(View v : mChildren) {
+    		view = v.findViewById(resourceId);
+    		if(null != view) {
+    			break;
+    		}
+    	}
+    	return view;
     }
     
     public Context getContext() {
@@ -303,8 +330,8 @@ public class ControlExtensionViewGroup extends ControlExtension {
                     event.getTimeStamp() - mDownStartTime, 
                     event.getTimeStamp(), 
                     action, 
-                    event.getX(), 
-                    event.getY(), 
+                    event.getX() + mScrollX, 
+                    event.getY() + mScrollY, 
                     0);
             onTouchEvent(me);
         }
