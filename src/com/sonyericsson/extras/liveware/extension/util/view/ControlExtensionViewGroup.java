@@ -4,15 +4,14 @@ import com.sonyericsson.extras.liveware.aef.control.Control;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlExtension;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlTouchEvent;
 import com.sonyericsson.extras.liveware.extension.util.registration.DeviceInfo;
-import com.sonyericsson.extras.liveware.sdk.R;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Bitmap.Config;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ControlExtensionViewGroup extends ControlExtension {
-	private static final String TAG = "ControlExtensionViewGroup";
+    private static final String TAG = "ControlExtensionViewGroup";
 
     private int mDevice;
 
@@ -58,8 +57,8 @@ public class ControlExtensionViewGroup extends ControlExtension {
 
         mDevice = device;
 
-        mWidth = DeviceInfo.getDeviceWidth(device);
-        mHeight = DeviceInfo.getDeviceHeight(device);
+        mWidth = DeviceInfo.getDeviceWidth(mDevice);
+        mHeight = DeviceInfo.getDeviceHeight(mDevice);
         mChildren = new ArrayList<View>();
         mBitmap = Bitmap.createBitmap(mWidth, mHeight, Config.RGB_565);
         mCanvas = new Canvas(mBitmap);
@@ -287,7 +286,7 @@ public class ControlExtensionViewGroup extends ControlExtension {
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() != View.GONE) {
-                child.layout(l, r, t, b);
+                child.layout(l, t, r, b);
             }
         }
     }
@@ -323,17 +322,17 @@ public class ControlExtensionViewGroup extends ControlExtension {
                 event.getTimeStamp() - mDownStartTime,
                 event.getTimeStamp(),
                 action,
-                    event.getX(), 
-                    event.getY(), 
+                    event.getX(),
+                    event.getY(),
                     0);
             onTouchEvent(me);
         }
     }
 
     public boolean onTouchEvent(MotionEvent ev) {
-        for(View v : mChildren) {
-        	if(v.getLeft() - mScrollX >= 0 && v.getRight() - mScrollX <= getWidth() &&
-        		v.getTop() - mScrollY >= 0 && v.getBottom() - mScrollY <= getHeight()) {
+        for (View v : mChildren) {
+            if (v.getLeft() - mScrollX >= 0 && v.getRight() - mScrollX <= getWidth() &&
+                    v.getTop() - mScrollY >= 0 && v.getBottom() - mScrollY <= getHeight()) {
                 v.dispatchTouchEvent(ev);
             }
         }
