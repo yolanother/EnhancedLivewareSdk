@@ -6,13 +6,12 @@ import com.sonyericsson.extras.liveware.extension.util.control.ControlTouchEvent
 import com.sonyericsson.extras.liveware.sdk.R;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Bitmap.Config;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Canvas;
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,9 +28,10 @@ public class ControlExtensionViewGroup extends ControlExtension {
     private static final int DEVICE_HEADSET = 1;
 
     private int mDevice;
+
     private int mWidth;
     private int mHeight;
-    
+
     private List<View> mChildren;
     private int mScrollX;
     private int mScrollY;
@@ -52,7 +52,8 @@ public class ControlExtensionViewGroup extends ControlExtension {
     public ControlExtensionViewGroup(final Context context, final int device,
             final String hostAppPackageName) {
         super(context, hostAppPackageName);
-        if (device != DEVICE_HEADSET || device != DEVICE_SMART_WATCH) {
+
+        if (device != DEVICE_HEADSET && device != DEVICE_SMART_WATCH) {
             throw new IllegalArgumentException("Invalid device");
         }
 
@@ -64,7 +65,7 @@ public class ControlExtensionViewGroup extends ControlExtension {
         mBitmap = Bitmap.createBitmap(mWidth, mHeight, Config.RGB_565);
         mCanvas = new Canvas(mBitmap);
     }
-    
+
 
     /**
      * Ask all of the children of this view to measure themselves, taking into
@@ -203,46 +204,47 @@ public class ControlExtensionViewGroup extends ControlExtension {
             params = new ViewGroup.LayoutParams(mWidth, mHeight);
             v.setLayoutParams(params);
         }
+
         mChildren.add(v);
         onMeasure(mWidth, mHeight);
         onLayout(true, 0, 0, mWidth, mHeight);
         invalidate();
     }
-    
+
     public View addView(int resourceId) {
         final LayoutInflater inflater = LayoutInflater.from(mContext);
         View v = inflater.inflate(resourceId, null);
         addView(v);
         return v;
     }
-    
+
     public void setContentView(int resourceId) {
-    	addView(resourceId);
+        addView(resourceId);
     }
-    
+
     public void setContentView(View view) {
-    	addView(view);
+        addView(view);
     }
-    
+
     public View getChildAt(int index) {
         return mChildren.get(index);
     }
-    
+
     public View findViewById(int resourceId) {
-    	View view = null;
-    	for(View v : mChildren) {
-    		view = v.findViewById(resourceId);
-    		if(null != view) {
-    			break;
-    		}
-    	}
-    	return view;
+        View view = null;
+        for(View v : mChildren) {
+            view = v.findViewById(resourceId);
+            if(null != view) {
+                break;
+            }
+        }
+        return view;
     }
-    
+
     public Context getContext() {
         return mContext;
     }
-    
+
     public int getChildCount() {
         return mChildren.size();
     }
@@ -307,7 +309,7 @@ public class ControlExtensionViewGroup extends ControlExtension {
     public void onResume() {
         invalidate();
     }
-    
+
     public void scrollTo(int x, int y) {
         mScrollX = x;
         mScrollY = y;
@@ -340,7 +342,7 @@ public class ControlExtensionViewGroup extends ControlExtension {
     public boolean onInterceptTouchEvent(final ControlTouchEvent ev) {
         return false;
     }
-    
+
     @Override
     public void onTouch(ControlTouchEvent event) {
         if(!onInterceptTouchEvent(event)) {
@@ -359,11 +361,11 @@ public class ControlExtensionViewGroup extends ControlExtension {
                     break;
             }
 
-            
+
             MotionEvent me = MotionEvent.obtain(
-                    event.getTimeStamp() - mDownStartTime, 
-                    event.getTimeStamp(), 
-                    action, 
+                event.getTimeStamp() - mDownStartTime,
+                event.getTimeStamp(),
+                action,
                     event.getX(), 
                     event.getY(), 
                     0);
@@ -375,7 +377,7 @@ public class ControlExtensionViewGroup extends ControlExtension {
         for(View v : mChildren) {
         	if(v.getLeft() - mScrollX >= 0 && v.getRight() - mScrollX <= getWidth() &&
         		v.getTop() - mScrollY >= 0 && v.getBottom() - mScrollY <= getHeight()) {
-            	v.dispatchTouchEvent(ev);
+                v.dispatchTouchEvent(ev);
             }
         }
         return false;
@@ -391,19 +393,19 @@ public class ControlExtensionViewGroup extends ControlExtension {
     public void scrollBy(int x, int y) {
         scrollTo(mScrollX + x, mScrollY + y);
     }
-    
+
     public int getWidth() {
         return mWidth;
     }
-    
+
     public int getHeight() {
         return mHeight;
     }
-    
+
     public void computeScroll() {
-        
+
     }
-    
+
     public void postInvalidate() {
         invalidate();
     }
