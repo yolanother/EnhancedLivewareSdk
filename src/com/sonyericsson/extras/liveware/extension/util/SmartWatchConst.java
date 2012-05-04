@@ -34,6 +34,9 @@ package com.sonyericsson.extras.liveware.extension.util;
 import android.graphics.Rect;
 
 public class SmartWatchConst {
+    public static final int DISPLAY_WIDTH = 128;
+
+    public static final int DISPLAY_HEIGHT = 128;
 
     /**
      * For a widget only taps in the 80 by 80 pixels in the center of the screen

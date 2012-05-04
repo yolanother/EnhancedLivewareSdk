@@ -52,7 +52,7 @@ public class ControlExtensionViewGroup extends ControlExtension {
             final String hostAppPackageName) {
         super(context, hostAppPackageName);
 
-        if (device != DEVICE_HEADSET || device != DEVICE_SMART_WATCH) {
+        if (device != DEVICE_HEADSET && device != DEVICE_SMART_WATCH) {
             throw new IllegalArgumentException("Invalid device");
         }
 
