@@ -277,8 +277,6 @@ public class ControlExtensionViewGroup extends ControlExtension {
     }
 
     public boolean onInterceptTouchEvent(final ControlTouchEvent ev) {
-        Log.d("ControlExtensionView", "" + ev.getX());
-        Log.d("ControlExtensionView", "" + ev.getY());
         return false;
     }
     
@@ -314,9 +312,7 @@ public class ControlExtensionViewGroup extends ControlExtension {
 
     public boolean onTouchEvent(MotionEvent ev) {
         for(View v : mChildren) {
-            if(v.onTouchEvent(ev)) {
-                return true;
-            }
+        	v.dispatchTouchEvent(ev);
         }
         return false;
     }
@@ -351,10 +347,6 @@ public class ControlExtensionViewGroup extends ControlExtension {
     public void invalidate() {
         mCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
         for(View v : mChildren) {
-            Log.d("ViewGroup", String.format("View:\n%d,%d,%d,%d", v.getLeft(),
-                    v.getRight(),
-                    v.getTop(), v.getBottom()));
-            Log.d("ViewGroup", "Scroll: " + mScrollX);
             mCanvas.save();
             mCanvas.translate(v.getLeft() - mScrollX, v.getTop() - mScrollY);
             v.draw(mCanvas);
