@@ -24,8 +24,8 @@ import java.util.List;
 
 public class ControlExtensionViewGroup extends ControlExtension {
 	private static final String TAG = "ControlExtensionViewGroup";
-    private static final int DEVICE_SMART_WATCH = 0;
-    private static final int DEVICE_HEADSET = 1;
+    public static final int DEVICE_SMART_WATCH = 0;
+    public static final int DEVICE_HEADSET = 1;
 
     private int mDevice;
 

@@ -41,6 +41,8 @@ import com.sonyericsson.extras.liveware.aef.registration.Registration.SensorColu
 import com.sonyericsson.extras.liveware.aef.registration.Registration.SensorType;
 import com.sonyericsson.extras.liveware.aef.registration.Registration.SensorTypeColumns;
 import com.sonyericsson.extras.liveware.extension.util.Dbg;
+import com.sonyericsson.extras.liveware.extension.util.SmartWatchConst;
+import com.sonyericsson.extras.liveware.extension.util.SmartWirelessHeadsetProUtil;
 import com.sonyericsson.extras.liveware.extension.util.sensor.AccessorySensor;
 import com.sonyericsson.extras.liveware.extension.util.sensor.AccessorySensorType;
 
@@ -56,6 +58,9 @@ import java.util.List;
  * contains a subset of the information available for the device.
  */
 public class DeviceInfo {
+	public static final int DEVICE_UNRECOGNIZED = 0;
+	public static final int DEVICE_SMART_WATCH = 1;
+	public static final int DEVICE_HEADSET = 2; 
 
     private final Context mContext;
 
@@ -393,5 +398,35 @@ public class DeviceInfo {
 
         return keyPad;
     }
-
+    
+    public static int getDeviceWidth(int device) {
+    	switch(device) {
+	    	case DEVICE_SMART_WATCH:
+	    		return SmartWatchConst.DISPLAY_WIDTH;
+	    	case DEVICE_HEADSET:
+	    		return SmartWirelessHeadsetProUtil.DISPLAY_WIDTH;
+    	}
+    	return 0;
+    }
+    
+    public static int getDeviceHeight(int device) {
+    	switch(device) {
+	    	case DEVICE_SMART_WATCH:
+	    		return SmartWatchConst.DISPLAY_HEIGHT;
+	    	case DEVICE_HEADSET:
+	    		return SmartWirelessHeadsetProUtil.DISPLAY_HEIGHT;
+    	}
+    	return 0;
+    }
+    
+    public int getDeviceType() {
+        for (DisplayInfo display : getDisplays()) {
+            if (display.sizeEquals(SmartWatchConst.DISPLAY_HEIGHT, SmartWatchConst.DISPLAY_WIDTH)) {
+                return DEVICE_SMART_WATCH;
+            } else if (display.sizeEquals(SmartWirelessHeadsetProUtil.DISPLAY_WIDTH, SmartWirelessHeadsetProUtil.DISPLAY_HEIGHT)) {
+                return DEVICE_HEADSET;
+            }
+        }
+        return DEVICE_UNRECOGNIZED;
+    }
 }
