@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.Bitmap.Config;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Canvas;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ControlExtensionViewGroup extends ControlExtension {
-    private static final String TAG = "ControlExtensionViewGroup";
-
     private int mDevice;
 
     private int mWidth;

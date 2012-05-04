@@ -25,7 +25,6 @@ import com.sonyericsson.extras.liveware.aef.control.Control;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -53,12 +52,6 @@ import android.view.WindowManager;
  * @version 0.1.0
  */
 public class HorizontalPager extends ControlExtensionViewGroup {
-	private static final String TAG = "HorizontalPager";
-    /*
-     * How long to animate between screens when programmatically setting with setCurrentScreen using
-     * the animate parameter
-     */
-    private static final int INVALID_SCREEN = -1;
     private int mCurrentScreen;
 
     /**
@@ -72,7 +65,7 @@ public class HorizontalPager extends ControlExtensionViewGroup {
         super(context, device, hostAppPackageName);
         init();
     }
-    
+
     /**
      * Sets up the scroller and touch/fling sensitivity parameters for the pager.
      */
@@ -98,7 +91,7 @@ public class HorizontalPager extends ControlExtensionViewGroup {
             }
         }
     }
-    
+
     @Override
     public void onSwipe(int direction) {
         super.onSwipe(direction);
@@ -106,7 +99,7 @@ public class HorizontalPager extends ControlExtensionViewGroup {
             setCurrentScreen(Math.min(mCurrentScreen - 1, 0), false);
         } else if(direction == Control.Intents.SWIPE_DIRECTION_LEFT) {
             setCurrentScreen(mCurrentScreen + 1, false);
-            
+
         }
     }
     /**
