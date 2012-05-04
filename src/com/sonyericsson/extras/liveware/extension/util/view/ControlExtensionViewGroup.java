@@ -6,13 +6,12 @@ import com.sonyericsson.extras.liveware.extension.util.control.ControlTouchEvent
 import com.sonyericsson.extras.liveware.sdk.R;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Bitmap.Config;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Canvas;
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,9 +23,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ControlExtensionViewGroup extends ControlExtension {
+    private static final int DEVICE_SMART_WATCH = 0;
+    private static final int DEVICE_HEADSET = 1;
+
+    private int mDevice;
+
     private int mWidth;
     private int mHeight;
-    
+
     private List<View> mChildren;
     private int mScrollX;
     private int mScrollY;
@@ -44,19 +48,23 @@ public class ControlExtensionViewGroup extends ControlExtension {
      * @param context The Context the view is running in, through which it can
      *        access the current theme, resources, etc.
      */
-    public ControlExtensionViewGroup(final Context context, final String hostAppPackageName,
-            Handler handler) {
+    public ControlExtensionViewGroup(final Context context, final int device,
+            final String hostAppPackageName) {
         super(context, hostAppPackageName);
-        if (handler == null) {
-            throw new IllegalArgumentException("handler == null");
+
+        if (device != DEVICE_HEADSET || device != DEVICE_SMART_WATCH) {
+            throw new IllegalArgumentException("Invalid device");
         }
-        mWidth = getSupportedControlWidth(context);
-        mHeight = getSupportedControlHeight(context);
+
+        mDevice = device;
+
+        mWidth = getSupportedControlWidth();
+        mHeight = getSupportedControlHeight();
         mChildren = new ArrayList<View>();
         mBitmap = Bitmap.createBitmap(mWidth, mHeight, Config.RGB_565);
         mCanvas = new Canvas(mBitmap);
     }
-    
+
 
     /**
      * Ask all of the children of this view to measure themselves, taking into
@@ -189,48 +197,53 @@ public class ControlExtensionViewGroup extends ControlExtension {
     }
 
     public void addView(View v) {
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(mWidth, mHeight);
-        v.setLayoutParams(params);
+        ViewGroup.LayoutParams params = v.getLayoutParams();
+
+        if (null == params) {
+            params = new ViewGroup.LayoutParams(mWidth, mHeight);
+            v.setLayoutParams(params);
+        }
+
         mChildren.add(v);
         onMeasure(mWidth, mHeight);
         onLayout(true, 0, 0, mWidth, mHeight);
         invalidate();
     }
-    
+
     public View addView(int resourceId) {
         final LayoutInflater inflater = LayoutInflater.from(mContext);
         View v = inflater.inflate(resourceId, null);
         addView(v);
         return v;
     }
-    
+
     public void setContentView(int resourceId) {
-    	addView(resourceId);
+        addView(resourceId);
     }
-    
+
     public void setContentView(View view) {
-    	addView(view);
+        addView(view);
     }
-    
+
     public View getChildAt(int index) {
         return mChildren.get(index);
     }
-    
+
     public View findViewById(int resourceId) {
-    	View view = null;
-    	for(View v : mChildren) {
-    		view = v.findViewById(resourceId);
-    		if(null != view) {
-    			break;
-    		}
-    	}
-    	return view;
+        View view = null;
+        for(View v : mChildren) {
+            view = v.findViewById(resourceId);
+            if(null != view) {
+                break;
+            }
+        }
+        return view;
     }
-    
+
     public Context getContext() {
         return mContext;
     }
-    
+
     public int getChildCount() {
         return mChildren.size();
     }
@@ -241,8 +254,19 @@ public class ControlExtensionViewGroup extends ControlExtension {
      * @param context The context.
      * @return the width.
      */
-    public static int getSupportedControlWidth(Context context) {
-        return context.getResources().getDimensionPixelSize(R.dimen.smart_watch_control_width);
+    public int getSupportedControlWidth() {
+        Resources r = mContext.getResources();
+
+        switch (mDevice) {
+            case DEVICE_HEADSET:
+                return r.getDimensionPixelSize(R.dimen.headset_pro_control_width);
+
+            case DEVICE_SMART_WATCH:
+                return r.getDimensionPixelSize(R.dimen.smart_watch_control_width);
+
+            default:
+                throw new IllegalArgumentException("Bad device");
+        }
     }
 
     /**
@@ -251,8 +275,19 @@ public class ControlExtensionViewGroup extends ControlExtension {
      * @param context The context.
      * @return the height.
      */
-    public static int getSupportedControlHeight(Context context) {
-        return context.getResources().getDimensionPixelSize(R.dimen.smart_watch_control_height);
+    public int getSupportedControlHeight() {
+        Resources r = mContext.getResources();
+
+        switch (mDevice) {
+            case DEVICE_HEADSET:
+                return r.getDimensionPixelSize(R.dimen.headset_pro_control_height);
+
+            case DEVICE_SMART_WATCH:
+                return r.getDimensionPixelSize(R.dimen.smart_watch_control_height);
+
+            default:
+                throw new IllegalArgumentException("Bad device");
+        }
     }
 
     @Override
@@ -273,7 +308,7 @@ public class ControlExtensionViewGroup extends ControlExtension {
     public void onResume() {
         invalidate();
     }
-    
+
     public void scrollTo(int x, int y) {
         mScrollX = x;
         mScrollY = y;
@@ -306,7 +341,7 @@ public class ControlExtensionViewGroup extends ControlExtension {
     public boolean onInterceptTouchEvent(final ControlTouchEvent ev) {
         return false;
     }
-    
+
     @Override
     public void onTouch(ControlTouchEvent event) {
         if(!onInterceptTouchEvent(event)) {
@@ -325,21 +360,22 @@ public class ControlExtensionViewGroup extends ControlExtension {
                     break;
             }
 
-            
+
             MotionEvent me = MotionEvent.obtain(
-                    event.getTimeStamp() - mDownStartTime, 
-                    event.getTimeStamp(), 
-                    action, 
-                    event.getX() + mScrollX, 
-                    event.getY() + mScrollY, 
-                    0);
+                event.getTimeStamp() - mDownStartTime,
+                event.getTimeStamp(),
+                action,
+                event.getX() + mScrollX,
+                event.getY() + mScrollY,
+                0
+            );
             onTouchEvent(me);
         }
     }
 
     public boolean onTouchEvent(MotionEvent ev) {
         for(View v : mChildren) {
-        	v.dispatchTouchEvent(ev);
+            v.dispatchTouchEvent(ev);
         }
         return false;
     }
@@ -354,19 +390,19 @@ public class ControlExtensionViewGroup extends ControlExtension {
     public void scrollBy(int x, int y) {
         scrollTo(mScrollX + x, mScrollY + y);
     }
-    
+
     public int getWidth() {
         return mWidth;
     }
-    
+
     public int getHeight() {
         return mHeight;
     }
-    
+
     public void computeScroll() {
-        
+
     }
-    
+
     public void postInvalidate() {
         invalidate();
     }

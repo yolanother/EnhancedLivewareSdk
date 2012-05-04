@@ -24,15 +24,11 @@ package com.sonyericsson.extras.liveware.extension.util.view;
 import com.sonyericsson.extras.liveware.aef.control.Control;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.VelocityTracker;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Scroller;
 
 /**
  * A view group that allows users to switch between multiple screens (layouts) in the same way as
@@ -70,12 +66,12 @@ public class HorizontalPager extends ControlExtensionViewGroup {
      * @param context The Context the view is running in, through which it can
      *        access the current theme, resources, etc.
      */
-    public HorizontalPager(final Context context, final String hostAppPackageName,
-            Handler handler) {
-        super(context, hostAppPackageName, handler);
+    public HorizontalPager(final Context context, final int device,
+            final String hostAppPackageName) {
+        super(context, device, hostAppPackageName);
         init();
     }
-    
+
     /**
      * Sets up the scroller and touch/fling sensitivity parameters for the pager.
      */
@@ -101,7 +97,7 @@ public class HorizontalPager extends ControlExtensionViewGroup {
             }
         }
     }
-    
+
     @Override
     public void onSwipe(int direction) {
         super.onSwipe(direction);
@@ -112,7 +108,7 @@ public class HorizontalPager extends ControlExtensionViewGroup {
         } else if(direction == Control.Intents.SWIPE_DIRECTION_LEFT) {
             setCurrentScreen(mCurrentScreen + 1, false);
             Log.d("HorizontalPager", "Swipe right");
-            
+
         }
     }
     /**
