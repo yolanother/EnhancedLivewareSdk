@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ControlExtensionViewGroup extends ControlExtension {
+	private static final String TAG = "ControlExtensionViewGroup";
+	
     private int mWidth;
     private int mHeight;
     
@@ -44,12 +46,8 @@ public class ControlExtensionViewGroup extends ControlExtension {
      * @param context The Context the view is running in, through which it can
      *        access the current theme, resources, etc.
      */
-    public ControlExtensionViewGroup(final Context context, final String hostAppPackageName,
-            Handler handler) {
+    public ControlExtensionViewGroup(final Context context, final String hostAppPackageName) {
         super(context, hostAppPackageName);
-        if (handler == null) {
-            throw new IllegalArgumentException("handler == null");
-        }
         mWidth = getSupportedControlWidth(context);
         mHeight = getSupportedControlHeight(context);
         mChildren = new ArrayList<View>();
@@ -324,14 +322,13 @@ public class ControlExtensionViewGroup extends ControlExtension {
                     action = MotionEvent.ACTION_UP;
                     break;
             }
-
             
             MotionEvent me = MotionEvent.obtain(
                     event.getTimeStamp() - mDownStartTime, 
                     event.getTimeStamp(), 
                     action, 
-                    event.getX() + mScrollX, 
-                    event.getY() + mScrollY, 
+                    event.getX(), 
+                    event.getY(), 
                     0);
             onTouchEvent(me);
         }
@@ -339,7 +336,10 @@ public class ControlExtensionViewGroup extends ControlExtension {
 
     public boolean onTouchEvent(MotionEvent ev) {
         for(View v : mChildren) {
-        	v.dispatchTouchEvent(ev);
+        	if(v.getLeft() - mScrollX >= 0 && v.getRight() - mScrollX <= getWidth() &&
+        		v.getTop() - mScrollY >= 0 && v.getBottom() - mScrollY <= getHeight()) {
+        		v.dispatchTouchEvent(ev);
+        	}
         }
         return false;
     }
@@ -375,6 +375,7 @@ public class ControlExtensionViewGroup extends ControlExtension {
         mCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
         for(View v : mChildren) {
             mCanvas.save();
+            Log.d(TAG, "View left: " + v.getLeft());
             mCanvas.translate(v.getLeft() - mScrollX, v.getTop() - mScrollY);
             v.draw(mCanvas);
             mCanvas.restore();

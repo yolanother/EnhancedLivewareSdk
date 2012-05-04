@@ -57,6 +57,7 @@ import android.widget.Scroller;
  * @version 0.1.0
  */
 public class HorizontalPager extends ControlExtensionViewGroup {
+	private static final String TAG = "HorizontalPager";
     /*
      * How long to animate between screens when programmatically setting with setCurrentScreen using
      * the animate parameter
@@ -70,9 +71,8 @@ public class HorizontalPager extends ControlExtensionViewGroup {
      * @param context The Context the view is running in, through which it can
      *        access the current theme, resources, etc.
      */
-    public HorizontalPager(final Context context, final String hostAppPackageName,
-            Handler handler) {
-        super(context, hostAppPackageName, handler);
+    public HorizontalPager(final Context context, final String hostAppPackageName) {
+        super(context, hostAppPackageName);
         init();
     }
     
@@ -105,13 +105,10 @@ public class HorizontalPager extends ControlExtensionViewGroup {
     @Override
     public void onSwipe(int direction) {
         super.onSwipe(direction);
-        Log.d("HorizontalPager", "Event: " + direction);
         if(direction == Control.Intents.SWIPE_DIRECTION_RIGHT) {
             setCurrentScreen(Math.min(mCurrentScreen - 1, 0), false);
-            Log.d("HorizontalPager", "Swipe left");
         } else if(direction == Control.Intents.SWIPE_DIRECTION_LEFT) {
             setCurrentScreen(mCurrentScreen + 1, false);
-            Log.d("HorizontalPager", "Swipe right");
             
         }
     }
