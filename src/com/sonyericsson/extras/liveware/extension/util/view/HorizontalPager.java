@@ -24,15 +24,11 @@ package com.sonyericsson.extras.liveware.extension.util.view;
 import com.sonyericsson.extras.liveware.aef.control.Control;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.VelocityTracker;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Scroller;
 
 /**
  * A view group that allows users to switch between multiple screens (layouts) in the same way as
@@ -71,8 +67,9 @@ public class HorizontalPager extends ControlExtensionViewGroup {
      * @param context The Context the view is running in, through which it can
      *        access the current theme, resources, etc.
      */
-    public HorizontalPager(final Context context, final String hostAppPackageName) {
-        super(context, hostAppPackageName);
+    public HorizontalPager(final Context context, final int device,
+            final String hostAppPackageName) {
+        super(context, device, hostAppPackageName);
         init();
     }
     

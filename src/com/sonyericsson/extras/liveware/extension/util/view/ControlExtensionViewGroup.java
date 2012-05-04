@@ -25,7 +25,10 @@ import java.util.List;
 
 public class ControlExtensionViewGroup extends ControlExtension {
 	private static final String TAG = "ControlExtensionViewGroup";
-	
+    private static final int DEVICE_SMART_WATCH = 0;
+    private static final int DEVICE_HEADSET = 1;
+
+    private int mDevice;
     private int mWidth;
     private int mHeight;
     
@@ -46,10 +49,17 @@ public class ControlExtensionViewGroup extends ControlExtension {
      * @param context The Context the view is running in, through which it can
      *        access the current theme, resources, etc.
      */
-    public ControlExtensionViewGroup(final Context context, final String hostAppPackageName) {
+    public ControlExtensionViewGroup(final Context context, final int device,
+            final String hostAppPackageName) {
         super(context, hostAppPackageName);
-        mWidth = getSupportedControlWidth(context);
-        mHeight = getSupportedControlHeight(context);
+        if (device != DEVICE_HEADSET || device != DEVICE_SMART_WATCH) {
+            throw new IllegalArgumentException("Invalid device");
+        }
+
+        mDevice = device;
+
+        mWidth = getSupportedControlWidth();
+        mHeight = getSupportedControlHeight();
         mChildren = new ArrayList<View>();
         mBitmap = Bitmap.createBitmap(mWidth, mHeight, Config.RGB_565);
         mCanvas = new Canvas(mBitmap);
@@ -187,8 +197,12 @@ public class ControlExtensionViewGroup extends ControlExtension {
     }
 
     public void addView(View v) {
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(mWidth, mHeight);
-        v.setLayoutParams(params);
+        ViewGroup.LayoutParams params = v.getLayoutParams();
+
+        if (null == params) {
+            params = new ViewGroup.LayoutParams(mWidth, mHeight);
+            v.setLayoutParams(params);
+        }
         mChildren.add(v);
         onMeasure(mWidth, mHeight);
         onLayout(true, 0, 0, mWidth, mHeight);
@@ -239,8 +253,19 @@ public class ControlExtensionViewGroup extends ControlExtension {
      * @param context The context.
      * @return the width.
      */
-    public static int getSupportedControlWidth(Context context) {
-        return context.getResources().getDimensionPixelSize(R.dimen.smart_watch_control_width);
+    public int getSupportedControlWidth() {
+        Resources r = mContext.getResources();
+
+        switch (mDevice) {
+            case DEVICE_HEADSET:
+                return r.getDimensionPixelSize(R.dimen.headset_pro_control_width);
+
+            case DEVICE_SMART_WATCH:
+                return r.getDimensionPixelSize(R.dimen.smart_watch_control_width);
+
+            default:
+                throw new IllegalArgumentException("Bad device");
+        }
     }
 
     /**
@@ -249,8 +274,19 @@ public class ControlExtensionViewGroup extends ControlExtension {
      * @param context The context.
      * @return the height.
      */
-    public static int getSupportedControlHeight(Context context) {
-        return context.getResources().getDimensionPixelSize(R.dimen.smart_watch_control_height);
+    public int getSupportedControlHeight() {
+        Resources r = mContext.getResources();
+
+        switch (mDevice) {
+            case DEVICE_HEADSET:
+                return r.getDimensionPixelSize(R.dimen.headset_pro_control_height);
+
+            case DEVICE_SMART_WATCH:
+                return r.getDimensionPixelSize(R.dimen.smart_watch_control_height);
+
+            default:
+                throw new IllegalArgumentException("Bad device");
+        }
     }
 
     @Override
@@ -322,6 +358,7 @@ public class ControlExtensionViewGroup extends ControlExtension {
                     action = MotionEvent.ACTION_UP;
                     break;
             }
+
             
             MotionEvent me = MotionEvent.obtain(
                     event.getTimeStamp() - mDownStartTime, 
@@ -338,8 +375,8 @@ public class ControlExtensionViewGroup extends ControlExtension {
         for(View v : mChildren) {
         	if(v.getLeft() - mScrollX >= 0 && v.getRight() - mScrollX <= getWidth() &&
         		v.getTop() - mScrollY >= 0 && v.getBottom() - mScrollY <= getHeight()) {
-        		v.dispatchTouchEvent(ev);
-        	}
+            	v.dispatchTouchEvent(ev);
+            }
         }
         return false;
     }
@@ -375,7 +412,6 @@ public class ControlExtensionViewGroup extends ControlExtension {
         mCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
         for(View v : mChildren) {
             mCanvas.save();
-            Log.d(TAG, "View left: " + v.getLeft());
             mCanvas.translate(v.getLeft() - mScrollX, v.getTop() - mScrollY);
             v.draw(mCanvas);
             mCanvas.restore();
