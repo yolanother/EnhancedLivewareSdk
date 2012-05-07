@@ -369,6 +369,8 @@ public class ControlExtensionViewGroup extends ControlExtension {
     }
 
     public void invalidate() {
+    	onMeasure(getWidth(), getHeight());
+    	onLayout(true, 0, 0, getWidth(), getHeight());
         mCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
         for(View v : mChildren) {
             mCanvas.save();
