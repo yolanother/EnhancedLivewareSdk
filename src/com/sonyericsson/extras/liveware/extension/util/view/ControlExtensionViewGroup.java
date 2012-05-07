@@ -59,8 +59,14 @@ public class ControlExtensionViewGroup extends ControlExtension {
         mChildren = new ArrayList<View>();
         mBitmap = Bitmap.createBitmap(mWidth, mHeight, Config.RGB_565);
         mCanvas = new Canvas(mBitmap);
+
+        onCreate();
+        invalidate();
     }
 
+    public void onCreate() {
+
+    }
 
     /**
      * Ask all of the children of this view to measure themselves, taking into
@@ -203,7 +209,6 @@ public class ControlExtensionViewGroup extends ControlExtension {
         mChildren.add(v);
         onMeasure(mWidth, mHeight);
         onLayout(true, 0, 0, mWidth, mHeight);
-        invalidate();
     }
 
     public View addView(int resourceId) {
