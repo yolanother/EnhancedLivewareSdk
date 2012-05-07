@@ -61,11 +61,6 @@ public class ControlExtensionViewGroup extends ControlExtension {
         mCanvas = new Canvas(mBitmap);
 
         onCreate();
-        invalidate();
-    }
-
-    public void onCreate() {
-
     }
 
     /**
@@ -249,20 +244,18 @@ public class ControlExtensionViewGroup extends ControlExtension {
         return mChildren.size();
     }
 
+    /**
+     * If you override this function, you should always call super.onDestroy().
+     */
     @Override
     public void onDestroy() {
         mBitmap.recycle();
     };
 
-    @Override
-    public void onStart() {
-        invalidate();
-    }
-
-    @Override
-    public void onStop() {
-    }
-
+    /**
+     * If you override this function, you should always call super.onResume()
+     * after you perform your necessary actions to force a screen update
+     */
     @Override
     public void onResume() {
         invalidate();

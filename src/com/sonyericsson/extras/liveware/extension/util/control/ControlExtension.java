@@ -160,6 +160,12 @@ public abstract class ControlExtension {
 
     }
 
+    /**
+     * Called when the control extension is created by the host application.
+     */
+    public void onCreate() {
+
+    }
 
     /**
      * Called to notify a control extension that it is no longer used and is
