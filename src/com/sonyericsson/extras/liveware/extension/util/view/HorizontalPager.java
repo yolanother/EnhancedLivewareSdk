@@ -24,10 +24,8 @@ package com.sonyericsson.extras.liveware.extension.util.view;
 import com.sonyericsson.extras.liveware.aef.control.Control;
 
 import android.content.Context;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 
 /**
  * A view group that allows users to switch between multiple screens (layouts) in the same way as
