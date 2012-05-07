@@ -63,17 +63,6 @@ public class HorizontalPager extends ControlExtensionViewGroup {
     public HorizontalPager(final Context context, final int device,
             final String hostAppPackageName) {
         super(context, device, hostAppPackageName);
-        init();
-    }
-
-    /**
-     * Sets up the scroller and touch/fling sensitivity parameters for the pager.
-     */
-    private void init() {
-        // Calculate the density-dependent snap velocity in pixels
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay()
-                .getMetrics(displayMetrics);
     }
 
     @Override
@@ -99,7 +88,6 @@ public class HorizontalPager extends ControlExtensionViewGroup {
             setCurrentScreen(Math.min(mCurrentScreen - 1, 0), false);
         } else if(direction == Control.Intents.SWIPE_DIRECTION_LEFT) {
             setCurrentScreen(mCurrentScreen + 1, false);
-
         }
     }
     /**
