@@ -1,5 +1,6 @@
 /*
 Copyright (c) 2011, Sony Ericsson Mobile Communications AB
+Copyright (c) 2012 Sony Mobile Communications AB.
 
 All rights reserved.
 
@@ -609,6 +610,15 @@ public abstract class ExtensionService extends Service implements IRegisterCallb
             if (Widget.Intents.WIDGET_STOP_REFRESH_IMAGE_INTENT.equals(action)) {
                 if (Dbg.DEBUG) {
                     Dbg.w("No widget object for: " + hostAppPackageName + ". Ignoring stop.");
+                }
+                return;
+            }
+            if (WidgetExtension.SCHEDULED_REFRESH_INTENT.equals(action)) {
+                // Don't create new widget object for scheduled refresh.
+                // If the widget was stopped, but there was a scheduled refresh
+                // waiting to be processed this would start the widget again.
+                if (Dbg.DEBUG) {
+                    Dbg.d("No widget object for: " + hostAppPackageName + ". Ignoring scheduled refersh.");
                 }
                 return;
             }

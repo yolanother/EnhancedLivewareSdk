@@ -36,7 +36,9 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 /**
- * This extension of TextView renders text on a single line, and fades end if text does not fit.
+ * This extension of TextView renders text on a single line, and fades end if
+ * text does not fit. NOTE! This view only supports a single text line and only
+ * handles gravity left.
  */
 public class AefTextView extends TextView {
     public AefTextView(Context context, AttributeSet attrs) {

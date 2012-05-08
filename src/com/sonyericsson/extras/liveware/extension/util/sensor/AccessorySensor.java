@@ -1,5 +1,6 @@
 /*
  Copyright (c) 2011, Sony Ericsson Mobile Communications AB
+ Copyright (c) 2012 Sony Mobile Communications AB.
 
  All rights reserved.
 
@@ -241,11 +242,6 @@ public class AccessorySensor {
 
     /**
      * Create socket to be able to read sensor data
-     *
-     * @param thread The thread handling the socket
-     * @param sensorId Id of the sensor
-     * @param socketName Name of the socket
-     * @param handler to handle sensor values
      */
     private void openSocket() throws AccessorySensorException {
         try {
@@ -290,7 +286,7 @@ public class AccessorySensor {
                 mLocalServerSocket = null;
             } catch (IOException e) {
                 if (Dbg.DEBUG) {
-                    Dbg.e(e.getMessage(), e);
+                    Dbg.w(e.getMessage(), e);
                 }
             }
         }
@@ -346,13 +342,15 @@ public class AccessorySensor {
      * Provides a thread which can read from the socket
      */
     private class ServerThread extends Thread {
-        private Handler handler;
+        private final Handler mHandler;
 
         /**
          * Creates a thread which can read from the socket
+         *
+         * @param handler The handler to post messages on.
          */
         public ServerThread(Handler handler) {
-            this.handler = handler;
+            mHandler = handler;
         }
 
         @Override
@@ -360,17 +358,17 @@ public class AccessorySensor {
             try {
                 DataInputStream inStream = new DataInputStream(mLocalServerSocket.accept()
                         .getInputStream());
-                while (!mServerThread.isInterrupted()) {
+                while (!isInterrupted()) {
                     AccessorySensorEvent event = decodeSensorData(inStream);
                     if (event != null) {
                         Message msg = new Message();
                         msg.obj = event;
-                        handler.sendMessage(msg);
+                        mHandler.sendMessage(msg);
                     }
                 }
             } catch (IOException e) {
                 if (Dbg.DEBUG) {
-                    Dbg.e(e.getMessage(), e);
+                    Dbg.w(e.getMessage(), e);
                 }
             }
         }
@@ -380,7 +378,6 @@ public class AccessorySensor {
      * Decodes data from the socket
      *
      * @param inStream The data stream
-     *
      * @return The sensor event.
      */
     private AccessorySensorEvent decodeSensorData(DataInputStream inStream) throws IOException {
